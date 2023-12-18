@@ -14,21 +14,29 @@ function getResult(me, other) {
 }
 
 function App(){
+    let init = 'rock';
+
+    const [hand, setHand]= useState(init);
+    const [otherHand, setOtherHand]= useState(init);
+
     // hand와 otherHand를 state로 바꿔 주세요
     // const hand = 'rock';
     // const otherHand = 'scissor';
 
     const handleButtonClick = (nextHand) => {
         // hand의 값을 nextHand 로 바꿔 주세요
+        setHand(nextHand);
         // otherHand의 값을 generateRandomHand()의 리턴 값으로 바꿔주세요
+        setOtherHand(generateRandomHand());
     };
 
     const handleClearClick = () => {
         // hand와 otherHand의 값을 'rock' 으로 바꿔주세요
+        setHand(init);
+        setOtherHand(init)
     };
 
-    const [hand, setHand]= useState('rock');
-    const [otherHand, setOtherHand]= useState('scissor');
+
     // const [value, setValue]= useState('scissor');
 
     return (
