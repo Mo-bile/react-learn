@@ -1,27 +1,50 @@
+import { useState } from "react";
 import Button from "./Button";
 import Dice from "./Dice";
 import HandButton from "./HandButton";
 import HandIcon from "./HandIcon";
 
+import { compareHand, generateRandomHand } from './util';
+
+function getResult(me, other) {
+  const comparison = compareHand(me, other);
+  if (comparison > 0) return '승리';
+  if (comparison < 0) return '패배';
+  return '무승부';
+}
 
 function App(){
-    // return (<div>
-    //     {/* <Dice color="red" /> */}
-    //     <HandButton value= 'rock' onClick={'rock'}/>
-    //     <HandButton value= 'scissor' onClick={'scissor'}/>
-    //     <HandButton value= 'paper' onClick={'paper'}/>
-    // </div>);
-    const handleClick = (value) => console.log(value);
-    const handleClearClick = () => console.log('처음부터');
+    // hand와 otherHand를 state로 바꿔 주세요
+    // const hand = 'rock';
+    // const otherHand = 'scissor';
+
+    const handleButtonClick = (nextHand) => {
+        // hand의 값을 nextHand 로 바꿔 주세요
+        // otherHand의 값을 generateRandomHand()의 리턴 값으로 바꿔주세요
+    };
+
+    const handleClearClick = () => {
+        // hand와 otherHand의 값을 'rock' 으로 바꿔주세요
+    };
+
+    const [hand, setHand]= useState('rock');
+    const [otherHand, setOtherHand]= useState('scissor');
+    // const [value, setValue]= useState('scissor');
+
     return (
     <div>
-        {/* props 을 안던져줘도 되는 방식으로 바뀜 */}
-        <Button  onClick={handleClearClick} >
-            처음부터!! 
-        </Button>
-        <HandButton value2="rock" onClick={handleClick} />
-        <HandButton value2="scissor" onClick={handleClick} />
-        <HandButton value2="paper" onClick={handleClick} />
+        <Button onClick={handleClearClick}>처음부터</Button>
+        <p>{getResult(hand, otherHand)}</p>
+        <div>
+            <HandIcon value={hand} />
+            VS
+            <HandIcon value={otherHand} />
+        </div>
+        <div>
+            <HandButton value="rock" onClick={handleButtonClick} />
+            <HandButton value="scissor" onClick={handleButtonClick} />
+            <HandButton value="paper" onClick={handleButtonClick} />
+        </div>
     </div>
 );
 }
