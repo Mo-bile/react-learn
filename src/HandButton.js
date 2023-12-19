@@ -1,25 +1,16 @@
 import HandIcon from "./HandIcon";
-import purpleImage from './assets/purple.svg'
-
-const HandButtonStyle = {
-    width: '166px',
-    height: '166px',
-    border: 'none',
-    outline: 'none',
-    textAlign: 'center',
-    cursor: 'pointer',
-    backgroundColor: 'transparent',
-    backgroundImage: `url(${purpleImage})`, //이런식으로 넣어주어야함
-    backgroundRepeat: "no-repeat",
-    backgroundPosition: 'center',
-    backgroundSize: 'contain'
-};
+import './HandButton.css';
 
 function HandButton({ value, onClick }) {
+
+    // 이렇게 어렵게 할 필요없이 바로 값 넣으면됨
+    // const className = `HandButton`
+    // const className2 = `HandButton-icon`
     const handleClick = () => onClick(value);
     return (
-        <button style={HandButtonStyle} onClick={handleClick}>
-            <HandIcon value={value}/>
-        </button>);
+        <button className="HandButton" onClick={handleClick}>
+            <HandIcon className="HandButton-icon" value={value}/>
+        </button>
+        );
   }
   export default HandButton;
