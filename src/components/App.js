@@ -1,10 +1,11 @@
-import ReviewList from "./ReviewList";
+import "./FoodList.css";
 import items from "../mock.json";
+import FoodList from "./FoodList";
 
 function App() {
   return (
-    <div>
-      <ReviewList items={items} />
+    <div className="FoodListItem">
+      <FoodList items={items} />
     </div>
   );
 }

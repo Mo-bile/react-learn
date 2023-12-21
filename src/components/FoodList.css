@@ -1,10 +1,10 @@
-.ReviewListItem {
+.FoodListItem {
   display: flex;
   padding: 10px;
   align-items: center;
 }
 
-.ReviewListItem-img {
+.FoodListItem-img {
   width: 200px;
   height: 300px;
   object-fit: cover;
