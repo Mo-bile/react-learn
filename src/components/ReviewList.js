@@ -2,7 +2,7 @@ import "./ReviewList.css";
 
 function formatData(value) {
   const date = new Date(value);
-  return `${date.getFullYear}. ${date.getMonth() + 1}. ${date.getDate()}}`;
+  return `${date.getFullYear()}. ${date.getMonth() + 1}. ${date.getDate()}`;
 }
 
 function ReviewListItem({ item }) {
