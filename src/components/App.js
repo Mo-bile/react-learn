@@ -1,7 +1,7 @@
 import "./FoodList.css";
 // import mockItems from "../mock.json";
 import FoodList from "./FoodList";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import {getFoods} from "../api";
 
 function App() {
@@ -15,11 +15,14 @@ function App() {
       setItems(nextItems);
   }
 
-  const handleLoadFood = async () =>{
+  const handleLoad = async () =>{
       const {foods} = await getFoods();
-      // console.log(foodList);
       setItems(foods);
   }
+
+  useEffect(() => {
+      handleLoad();
+  }, [])
 
   return (
     <div className="FoodListItem">
@@ -27,7 +30,7 @@ function App() {
       <button onClick={handleCalorieClick}>칼로리순</button>
       <FoodList items={sortedItem} onDelete={handleDeleteFood}/>
 
-        <button onClick={handleLoadFood}>불러오기</button>
+        {/*<button onClick={handleLoadFood}>불러오기</button>*/}
     </div>
   );
 }
