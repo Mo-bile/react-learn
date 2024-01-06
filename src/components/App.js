@@ -15,22 +15,20 @@ function App() {
       setItems(nextItems);
   }
 
-  const handleLoad = async () =>{
-      const {foods} = await getFoods();
+  const handleLoad = async (orderQuery) =>{
+      const {foods} = await getFoods(orderQuery);
       setItems(foods);
   }
 
   useEffect(() => {
-      handleLoad();
-  }, [])
+      handleLoad(order);
+  }, [order])
 
   return (
     <div className="FoodListItem">
       <button onClick={handleNewsClick}>최신순</button>
       <button onClick={handleCalorieClick}>칼로리순</button>
       <FoodList items={sortedItem} onDelete={handleDeleteFood}/>
-
-        {/*<button onClick={handleLoadFood}>불러오기</button>*/}
     </div>
   );
 }
