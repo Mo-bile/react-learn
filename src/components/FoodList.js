@@ -20,10 +20,12 @@ function FoodListItem({ item, onDelete }) {
 }
 
 function FoodList({ items, onDelete }) {
+    let count = 1;
   return (
     <ul className="FoodList">
       {items.map((item) => (
           <li key={item.id}>
+              {count++}
             <FoodListItem item={item} onDelete={onDelete} />;
           </li>
       ))}

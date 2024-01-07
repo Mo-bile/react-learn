@@ -5,8 +5,12 @@ import {useEffect, useState} from "react";
 import {getFoods} from "../api";
 
 function App() {
+
+    const LIMIT = 10;
+
     const [items, setItems] = useState([]);
   const [order, setOrder] = useState("createdAt");
+  const [cursor, setCursor] = useState('');
   const sortedItem = items.sort((a, b) => b[order] - a[order]);
   const handleNewsClick = () => setOrder("createdAt");
   const handleCalorieClick = () => setOrder("calorie");
@@ -15,13 +19,25 @@ function App() {
       setItems(nextItems);
   }
 
-  const handleLoad = async (orderQuery) =>{
-      const {foods} = await getFoods(orderQuery);
-      setItems(foods);
+  const handleLoad = async (options) =>{
+      const {
+          foods,
+          paging : {nextCursor} //별도명으로 바로 지정이 가능함
+      } = await getFoods(options);
+      if (options.cursor === '') {
+          setItems(foods);
+      } else {
+          setItems((prevItems) => [...prevItems, ...foods]);
+      }
+      setCursor(nextCursor);
   }
 
+    const handleLoadMore = () =>{
+        handleLoad({order, cursor, limit:LIMIT});
+    }
+
   useEffect(() => {
-      handleLoad(order);
+      handleLoad({order, cursor : '', limit:LIMIT});
   }, [order])
 
   return (
@@ -29,6 +45,9 @@ function App() {
       <button onClick={handleNewsClick}>최신순</button>
       <button onClick={handleCalorieClick}>칼로리순</button>
       <FoodList items={sortedItem} onDelete={handleDeleteFood}/>
+
+        {cursor &&
+            <button onClick={handleLoadMore}>더 보 기</button>}
     </div>
   );
 }
