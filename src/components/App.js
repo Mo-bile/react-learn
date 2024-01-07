@@ -6,9 +6,8 @@ import {getFoods} from "../api";
 
 function App() {
 
-    const LIMIT = 10;
-
-    const [items, setItems] = useState([]);
+  const LIMIT = 10;
+  const [items, setItems] = useState([]);
   const [order, setOrder] = useState("createdAt");
   const [cursor, setCursor] = useState('');
   const [isLoading, setIsLoading] = useState(false);
