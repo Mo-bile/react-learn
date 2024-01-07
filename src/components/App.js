@@ -11,6 +11,8 @@ function App() {
     const [items, setItems] = useState([]);
   const [order, setOrder] = useState("createdAt");
   const [cursor, setCursor] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingError, setLoadingError] = useState(null);
   const sortedItem = items.sort((a, b) => b[order] - a[order]);
   const handleNewsClick = () => setOrder("createdAt");
   const handleCalorieClick = () => setOrder("calorie");
@@ -18,8 +20,18 @@ function App() {
       const nextItems = items.filter((item) => item.id !== id);
       setItems(nextItems);
   }
-
   const handleLoad = async (options) =>{
+      let result;
+      try {
+          setIsLoading(true);
+          setLoadingError(null);
+        result = await getFoods(options);
+      }catch (e) {
+          setLoadingError(e);
+          return;
+      }finally {
+        setIsLoading(false)
+      }
       const {
           foods,
           paging : {nextCursor} //별도명으로 바로 지정이 가능함
@@ -47,7 +59,8 @@ function App() {
       <FoodList items={sortedItem} onDelete={handleDeleteFood}/>
 
         {cursor &&
-            <button onClick={handleLoadMore}>더 보 기</button>}
+            <button disabled={isLoading} onClick={handleLoadMore}>더 보 기</button>}
+        {loadingError?.message && <span>{loadingError.message}</span>}
     </div>
   );
 }
