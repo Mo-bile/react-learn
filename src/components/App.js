@@ -2,6 +2,7 @@ import ReviewList from "./ReviewList";
 // import mockItems from "../mock.json";
 import {useEffect, useState} from "react";
 import {getReviews} from "../api";
+import ReviewForm from "./ReviewForm";
 
 function App() {
 
@@ -56,6 +57,7 @@ function App() {
     <div>
         <button onClick={handleNewestClick}>createdAt</button>
         <button onClick={handleBestClick}>rating</button>
+        <ReviewForm/>
         <ReviewList items={sortedItems} onDelete={handleDelete}/>
         {hasNext &&
             <button disabled={isLoading} onClick={handleLoadMore}>더보기</button>}
