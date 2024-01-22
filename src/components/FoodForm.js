@@ -1,20 +1,26 @@
 import { useState } from "react";
 import "./FoodForm.css";
+import FileInput from "./FIleInput";
 
 function Foodform() {
   const [values, setValues] = useState({
     title: "",
     calories: 0,
     content: "",
+    imgFile: null,
   });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target; //디스트럭쳐링
-    console.log(e.target);
+  const handleChange = (name, value) => {
     setValues((prevValues) => ({
       ...prevValues,
       [name]: value,
     }));
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target; //디스트럭쳐링
+    console.log(e.target);
+    handleChange(name, value);
   };
   //   const [title, setTitle] = useState("");
   //   const [calorie, setcalorie] = useState(0);
@@ -37,17 +43,26 @@ function Foodform() {
 
   return (
     <form className="ReviewForm" onSubmit={handleSubmit}>
-      <input name="title" value={values.title} onChange={handleChange}></input>
+      <FileInput
+        name="imgFile"
+        value={values.imgFile}
+        onChange={handleChange}
+      />
+      <input
+        name="title"
+        value={values.title}
+        onChange={handleInputChange}
+      ></input>
       <input
         name="calorie"
         type="number"
         value={values.calorie}
-        onChange={handleChange}
+        onChange={handleInputChange}
       ></input>
       <textarea
         name="content"
         value={values.content}
-        onChange={handleChange}
+        onChange={handleInputChange}
       ></textarea>
       <button type="submit">확인</button>
     </form>
