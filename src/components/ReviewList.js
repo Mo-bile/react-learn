@@ -1,3 +1,4 @@
+import Rating from "./Rating";
 import "./ReviewList.css";
 
 function formatData(value) {
@@ -6,17 +7,18 @@ function formatData(value) {
 }
 
 function ReviewListItem({ item, onDelete }) {
-    const handleDeleteClick = () => onDelete(item.id);
+  const handleDeleteClick = () => onDelete(item.id);
 
   return (
     <div className="ReviewListItem">
       <img className="ReviewListItem-img" src={item.imgUrl} alt={item.title} />
       <div>
         <h1>{item.title}</h1>
-        <p>{item.rating}</p>
+        <Rating value={item.rating} />
+        {/* <p>{item.rating}</p> */}
         <p>{formatData(item.createdAt)}</p>
         <p>{item.content}</p>
-          <button onClick={handleDeleteClick}>삭제</button>
+        <button onClick={handleDeleteClick}>삭제</button>
       </div>
     </div>
   );
