@@ -53,13 +53,17 @@ function App() {
     handleLoad({ order, cursor, limit: LIMIT, search });
   };
 
+  const handleSubmitSucess = (food) => {
+    setItems((prevItems) => [food, ...prevItems]);
+  };
+
   useEffect(() => {
     handleLoad({ order, cursor: "", limit: LIMIT, search });
   }, [order, search]);
 
   return (
     <div className="FoodListItem">
-      <FoodForm />
+      <FoodForm onSubmitSucess={handleSubmitSucess} />
       <button onClick={handleNewsClick}>최신순</button>
       <button onClick={handleCalorieClick}>칼로리순</button>
       <form onSubmit={handleSearchSubmit}>

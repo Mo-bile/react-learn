@@ -1,14 +1,53 @@
 import { useState } from "react";
 import "./FoodForm.css";
+import { createFood } from "../api";
 import FileInput from "./FIleInput";
 
-function Foodform() {
-  const [values, setValues] = useState({
-    title: "",
-    calories: 0,
-    content: "",
-    imgFile: null,
-  });
+function sanitize(type, value) {
+  switch (type) {
+    case "number":
+      return Number(value) || 0;
+
+    default:
+      return value;
+  }
+}
+
+const INITIAL = {
+  imgFile: null,
+  title: "",
+  calorie: 0,
+  content: "",
+};
+
+function FoodForm({ onSubmitSucess }) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submittingError, setSubmittingError] = useState(null);
+  const [values, setValues] = useState(INITIAL);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("imgFile", values.imgFile);
+    formData.append("title", values.title);
+    formData.append("calorie", values.calorie);
+    formData.append("content", values.content);
+
+    let result;
+    try {
+      setSubmittingError(null);
+      setIsSubmitting(true);
+      result = await createFood(formData);
+    } catch (error) {
+      setSubmittingError(error);
+    } finally {
+      setIsSubmitting(false);
+    }
+
+    const { food } = result;
+    onSubmitSucess(food);
+    setValues(INITIAL);
+  };
 
   const handleChange = (name, value) => {
     setValues((prevValues) => ({
@@ -18,54 +57,35 @@ function Foodform() {
   };
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target; //디스트럭쳐링
-    console.log(e.target);
-    handleChange(name, value);
-  };
-  //   const [title, setTitle] = useState("");
-  //   const [calorie, setcalorie] = useState(0);
-  //   const [content, setContent] = useState("");
-
-  //   const handleTitleChange = (e) => {
-  //     setTitle(e.target.value);
-  //   };
-  //   const handleCalorieChange = (e) => {
-  //     const nextCalorie = Number(e.target.value) || 0;
-  //     setcalorie(nextCalorie);
-  //   };
-  //   const handleContentChange = (e) => {
-  //     setContent(e.target.value);
-  //   };
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(values);
+    const { name, value, type } = e.target;
+    handleChange(name, sanitize(type, value));
   };
 
   return (
-    <form className="ReviewForm" onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit}>
       <FileInput
         name="imgFile"
         value={values.imgFile}
         onChange={handleChange}
       />
+      <input name="title" value={values.title} onChange={handleInputChange} />
       <input
-        name="title"
-        value={values.title}
-        onChange={handleInputChange}
-      ></input>
-      <input
-        name="calorie"
         type="number"
+        name="calorie"
         value={values.calorie}
         onChange={handleInputChange}
-      ></input>
-      <textarea
+      />
+      <input
         name="content"
         value={values.content}
         onChange={handleInputChange}
-      ></textarea>
-      <button type="submit">확인</button>
+      />
+      <button type="submit" disabled={isSubmitting}>
+        확인
+      </button>
+      {submittingError?.message && <div>{submittingError.message}</div>}
     </form>
   );
 }
-export default Foodform;
+
+export default FoodForm;
