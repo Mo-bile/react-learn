@@ -1,13 +1,20 @@
+import { useState } from "react";
 import Rating from "./Rating";
 import "./ReviewList.css";
+import ReviewForm from "./ReviewForm";
 
 function formatData(value) {
   const date = new Date(value);
   return `${date.getFullYear()}. ${date.getMonth() + 1}. ${date.getDate()}`;
 }
 
-function ReviewListItem({ item, onDelete }) {
+//자식 컴포넌트
+function ReviewListItem({ item, onDelete, onEdit }) {
   const handleDeleteClick = () => onDelete(item.id);
+
+  const handleEditClick = () => {
+    onEdit(item.id);
+  };
 
   return (
     <div className="ReviewListItem">
@@ -19,20 +26,54 @@ function ReviewListItem({ item, onDelete }) {
         <p>{formatData(item.createdAt)}</p>
         <p>{item.content}</p>
         <button onClick={handleDeleteClick}>삭제</button>
+        <button onClick={handleEditClick}>수정</button>
       </div>
     </div>
   );
 }
 
-function ReviewList({ items, onDelete }) {
+// 부모컴포넌트
+function ReviewList({ items, onDelete, onUpdate, onUpdateSucess }) {
+  const [editingId, setEditingId] = useState(null); //현재 수정중인 요소 Id기억
+
+  const handleCancel = () => setEditingId(null);
+
   return (
     <ul>
       {items.map((item) => {
-        return (
-          <li key={item.id}>
-            <ReviewListItem item={item} onDelete={onDelete} />
-          </li>
-        );
+        if (item.id === editingId) {
+          const { id, imgUrl, title, rating, content } = item;
+          const initialValues = { title, rating, content, imgFile: null };
+
+          const handleSubmit = (formatData) => onUpdate(id, formatData);
+
+          const handleSubmitSucess = (review) => {
+            onUpdateSucess(review);
+            setEditingId(null);
+          };
+
+          return (
+            <li key={item.id}>
+              <ReviewForm
+                initialValues={initialValues}
+                initialPreviews={imgUrl}
+                onCancel={handleCancel}
+                onSubmit={handleSubmit}
+                onSubmitSucess={handleSubmitSucess}
+              />
+            </li>
+          );
+        } else {
+          return (
+            <li key={item.id}>
+              <ReviewListItem
+                item={item}
+                onDelete={onDelete}
+                onEdit={setEditingId}
+              />
+            </li>
+          );
+        }
       })}
     </ul>
   );

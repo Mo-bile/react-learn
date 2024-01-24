@@ -2,7 +2,6 @@ import { useState } from "react";
 import "./ReviewForm.css";
 import FIleInput from "./FileInput";
 import RatingInput from "./RatingInput";
-import { createReviews } from "../api";
 
 const INITIAL_VALUES = {
   title: "",
@@ -11,10 +10,17 @@ const INITIAL_VALUES = {
   imgFile: null,
 };
 
-function ReviewForm({ onSubmitSucess }) {
+function ReviewForm({
+  initialValues = INITIAL_VALUES,
+  initialPreviews,
+  onCancel,
+  onSubmit,
+  //네트워크 req 를 보내는 함수를 받아서 기존에 사용하던 createReviews 대신함
+  onSubmitSucess,
+}) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submittingError, setSubmittingError] = useState(null);
-  const [values, setValues] = useState(INITIAL_VALUES);
+  const [values, setValues] = useState(initialValues);
 
   const handleChange = (name, value) => {
     setValues((prevValues) => ({
@@ -40,7 +46,7 @@ function ReviewForm({ onSubmitSucess }) {
     try {
       setSubmittingError(null);
       setIsSubmitting(true);
-      result = await createReviews(formatData);
+      result = await onSubmit(formatData);
     } catch (error) {
       setSubmittingError(error);
       return;
@@ -48,8 +54,8 @@ function ReviewForm({ onSubmitSucess }) {
       setIsSubmitting(false);
     }
     const { review } = result;
-    onSubmitSucess(review);
     setValues(INITIAL_VALUES);
+    onSubmitSucess(review);
   };
   return (
     <form className="ReviewForm" onSubmit={handleSubmit}>
@@ -57,6 +63,7 @@ function ReviewForm({ onSubmitSucess }) {
         name="imgFile"
         value={values.imgFile}
         onChange={handleChange}
+        initialPreviews={initialPreviews}
       />
       <input
         name="title"
@@ -73,6 +80,7 @@ function ReviewForm({ onSubmitSucess }) {
         value={values.content}
         onChange={handleInputChange}
       ></textarea>
+      {onCancel && <button onClick={onCancel}>취소</button>}
       <button type="submit" disabled={isSubmitting}>
         확인
       </button>

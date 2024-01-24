@@ -1,7 +1,7 @@
 import ReviewList from "./ReviewList";
 // import mockItems from "../mock.json";
 import { useEffect, useState } from "react";
-import { getReviews } from "../api";
+import { createReviews, getReviews, updateReviews } from "../api";
 import ReviewForm from "./ReviewForm";
 
 function App() {
@@ -47,8 +47,19 @@ function App() {
     handleLoad({ order, offset, limit: LIMIT });
   };
 
-  const handleSubmitSucess = (review) => {
+  const handleCreateSucess = (review) => {
     setItems((prevItems) => [review, ...prevItems]);
+  };
+
+  const handleUpdateSucess = (review) => {
+    setItems((prevItems) => {
+      const splitIdx = prevItems.findIndex((item) => item.id === review.id);
+      return [
+        ...prevItems.slice(0, splitIdx),
+        review,
+        ...prevItems.slice(splitIdx + 1),
+      ];
+    });
   };
 
   useEffect(() => {
@@ -59,8 +70,16 @@ function App() {
     <div>
       <button onClick={handleNewestClick}>createdAt</button>
       <button onClick={handleBestClick}>rating</button>
-      <ReviewForm onSubmitSucess={handleSubmitSucess} />
-      <ReviewList items={sortedItems} onDelete={handleDelete} />
+      <ReviewForm
+        onSubmit={createReviews}
+        onSubmitSucess={handleCreateSucess}
+      />
+      <ReviewList
+        items={sortedItems}
+        onDelete={handleDelete}
+        onUpdate={updateReviews}
+        onUpdateSucess={handleUpdateSucess}
+      />
       {hasNext && (
         <button disabled={isLoading} onClick={handleLoadMore}>
           더보기

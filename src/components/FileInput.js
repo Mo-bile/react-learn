@@ -1,8 +1,8 @@
 import { useRef, useState } from "react";
 import { useEffect } from "react";
 
-function FIleInput({ name, value, onChange }) {
-  const [preview, setPreview] = useState("");
+function FIleInput({ name, value, onChange, initialPreviews }) {
+  const [preview, setPreview] = useState(initialPreviews);
   const inputRef = useRef();
   //   const [value, setValue] = useState();
   const handeChange = (e) => {
@@ -28,7 +28,12 @@ function FIleInput({ name, value, onChange }) {
     //컴포넌트 함수에서 외부상태 변경할 때 useEffect 잘 활용함
 
     setPreview(nextPreview);
-  }, [value]); // value 값이 변경할 때 마다 set함
+
+    return () => {
+      setPreview(initialPreviews);
+      URL.revokeObjectURL(nextPreview);
+    };
+  }, [value, initialPreviews]); // value 값이 변경할 때 마다 set함
 
   return (
     <div>
