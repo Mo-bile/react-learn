@@ -2,7 +2,7 @@ import "./FoodList.css";
 // import mockItems from "../mock.json";
 import FoodList from "./FoodList";
 import { useEffect, useState } from "react";
-import { getFoods } from "../api";
+import { createFood, getFoods, updateFood, deleteFood } from "../api";
 import FoodForm from "./FoodForm";
 
 function App() {
@@ -16,9 +16,11 @@ function App() {
   const sortedItem = items.sort((a, b) => b[order] - a[order]);
   const handleNewsClick = () => setOrder("createdAt");
   const handleCalorieClick = () => setOrder("calorie");
-  const handleDeleteFood = (id) => {
-    const nextItems = items.filter((item) => item.id !== id);
-    setItems(nextItems);
+  const handleDeleteFood = async (id) => {
+    const result = await deleteFood(id);
+    if (!result) return;
+
+    setItems((prevItems) => prevItems.filter((item) => item.id !== id));
   };
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -53,8 +55,19 @@ function App() {
     handleLoad({ order, cursor, limit: LIMIT, search });
   };
 
-  const handleSubmitSucess = (food) => {
+  const handleCreateSuccess = (food) => {
     setItems((prevItems) => [food, ...prevItems]);
+  };
+
+  const handleUpdateSucess = (food) => {
+    setItems((prevItems) => {
+      const splitIdx = prevItems.findIndex((item) => item.id === food.id);
+      return [
+        ...prevItems.slice(0, splitIdx),
+        food,
+        ...prevItems.slice(splitIdx + 1),
+      ];
+    });
   };
 
   useEffect(() => {
@@ -63,14 +76,19 @@ function App() {
 
   return (
     <div className="FoodListItem">
-      <FoodForm onSubmitSucess={handleSubmitSucess} />
+      <FoodForm onSubmitSucess={handleCreateSuccess} onSubmit={createFood} />
       <button onClick={handleNewsClick}>최신순</button>
       <button onClick={handleCalorieClick}>칼로리순</button>
       <form onSubmit={handleSearchSubmit}>
         <input name="search" />
         <button type="submit">검색</button>
       </form>
-      <FoodList items={sortedItem} onDelete={handleDeleteFood} />
+      <FoodList
+        items={sortedItem}
+        onDelete={handleDeleteFood}
+        onUpdate={updateFood}
+        onUpdateSucess={handleUpdateSucess}
+      />
 
       {cursor && (
         <button disabled={isLoading} onClick={handleLoadMore}>
