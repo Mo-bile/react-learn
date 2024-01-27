@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Rating from "./Rating";
 import "./ReviewList.css";
 import ReviewForm from "./ReviewForm";
+import LocaleContext from "../contexts/LocaleContext";
 
 function formatData(value) {
   const date = new Date(value);
@@ -10,6 +11,8 @@ function formatData(value) {
 
 //자식 컴포넌트
 function ReviewListItem({ item, onDelete, onEdit }) {
+  const locate = useContext(LocaleContext);
+
   const handleDeleteClick = () => onDelete(item.id);
 
   const handleEditClick = () => {
@@ -25,6 +28,7 @@ function ReviewListItem({ item, onDelete, onEdit }) {
         {/* <p>{item.rating}</p> */}
         <p>{formatData(item.createdAt)}</p>
         <p>{item.content}</p>
+        <p>현재 언어 : {locate}</p>
         <button onClick={handleDeleteClick}>삭제</button>
         <button onClick={handleEditClick}>수정</button>
       </div>

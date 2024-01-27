@@ -9,6 +9,7 @@ import {
 } from "../api";
 import ReviewForm from "./ReviewForm";
 import useAsync from "./hooks/useAsync";
+import Locale from "../contexts/LocaleContext";
 
 function App() {
   const LIMIT = 6;
@@ -71,26 +72,28 @@ function App() {
   }, [order, handleLoad]);
 
   return (
-    <div>
-      <button onClick={handleNewestClick}>createdAt</button>
-      <button onClick={handleBestClick}>rating</button>
-      <ReviewForm
-        onSubmit={createReviews}
-        onSubmitSucess={handleCreateSucess}
-      />
-      <ReviewList
-        items={sortedItems}
-        onDelete={handleDelete}
-        onUpdate={updateReviews}
-        onUpdateSucess={handleUpdateSucess}
-      />
-      {hasNext && (
-        <button disabled={isLoading} onClick={handleLoadMore}>
-          더보기
-        </button>
-      )}
-      {loadingError?.message && <span>{loadingError.message}</span>}
-    </div>
+    <Locale.Provider value={"ko"}>
+      <div>
+        <button onClick={handleNewestClick}>createdAt</button>
+        <button onClick={handleBestClick}>rating</button>
+        <ReviewForm
+          onSubmit={createReviews}
+          onSubmitSucess={handleCreateSucess}
+        />
+        <ReviewList
+          items={sortedItems}
+          onDelete={handleDelete}
+          onUpdate={updateReviews}
+          onUpdateSucess={handleUpdateSucess}
+        />
+        {hasNext && (
+          <button disabled={isLoading} onClick={handleLoadMore}>
+            더보기
+          </button>
+        )}
+        {loadingError?.message && <span>{loadingError.message}</span>}
+      </div>
+    </Locale.Provider>
   );
 }
 
