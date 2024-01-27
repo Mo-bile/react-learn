@@ -9,11 +9,12 @@ import {
 } from "../api";
 import ReviewForm from "./ReviewForm";
 import useAsync from "./hooks/useAsync";
-import Locale from "../contexts/LocaleContext";
+import { LocaleProvider } from "../contexts/LocaleContext";
+import LocaleSelect from "./LocaleSelect";
 
 function App() {
   const LIMIT = 6;
-
+  // const [locale, setLocale] = useState("ko");
   const [items, setItems] = useState([]);
   const [order, setOrder] = useState("createdAt");
   const [offset, setOffset] = useState(0);
@@ -72,8 +73,9 @@ function App() {
   }, [order, handleLoad]);
 
   return (
-    <Locale.Provider value={"ko"}>
+    <LocaleProvider defaultValue={"ko"}>
       <div>
+        <LocaleSelect />
         <button onClick={handleNewestClick}>createdAt</button>
         <button onClick={handleBestClick}>rating</button>
         <ReviewForm
@@ -93,7 +95,7 @@ function App() {
         )}
         {loadingError?.message && <span>{loadingError.message}</span>}
       </div>
-    </Locale.Provider>
+    </LocaleProvider>
   );
 }
 
