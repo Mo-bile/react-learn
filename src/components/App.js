@@ -1,6 +1,6 @@
 import ReviewList from "./ReviewList";
 // import mockItems from "../mock.json";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   createReviews,
   deleteReviews,
@@ -8,6 +8,7 @@ import {
   updateReviews,
 } from "../api";
 import ReviewForm from "./ReviewForm";
+import useAsync from "./hooks/useAsync";
 
 function App() {
   const LIMIT = 6;
@@ -16,8 +17,10 @@ function App() {
   const [order, setOrder] = useState("createdAt");
   const [offset, setOffset] = useState(0);
   const [hasNext, setHasNext] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [loadingError, setLoadingError] = useState(null);
+  // const [isLoading, setIsLoading] = useState(false);
+  // const [loadingError, setLoadingError] = useState(null);
+  const [isLoading, loadingError, getReviewsAsync] = useAsync(getReviews);
+
   const sortedItems = items.sort((a, b) => b[order] - a[order]);
 
   const handleNewestClick = () => setOrder("createdAt");
@@ -27,27 +30,22 @@ function App() {
     if (!result) return;
     setItems((prevItems) => prevItems.filter((item) => item.id !== id));
   };
-  const handleLoad = async (options) => {
-    let result;
-    try {
-      setIsLoading(true);
-      setLoadingError(null);
-      result = await getReviews(options);
-    } catch (error) {
-      setLoadingError(error);
-      return;
-    } finally {
-      setIsLoading(false);
-    }
-    const { reviews, paging } = await getReviews(options);
-    if (options.offset === 0) {
-      setItems(reviews);
-    } else {
-      setItems((prevItems) => [...prevItems, ...reviews]);
-    }
-    setOffset(options.offset + reviews.length);
-    setHasNext(paging.hasNext);
-  };
+  const handleLoad = useCallback(
+    async (options) => {
+      const result = await getReviewsAsync(options);
+      if (!result) return; //왜냐 catch 에서 Return 은 undefined임
+
+      const { reviews, paging } = result;
+      if (options.offset === 0) {
+        setItems(reviews);
+      } else {
+        setItems((prevItems) => [...prevItems, ...reviews]);
+      }
+      setOffset(options.offset + reviews.length);
+      setHasNext(paging.hasNext);
+    },
+    [getReviewsAsync]
+  );
 
   const handleLoadMore = () => {
     handleLoad({ order, offset, limit: LIMIT });
@@ -70,7 +68,7 @@ function App() {
 
   useEffect(() => {
     handleLoad({ order, offset: 0, limit: LIMIT });
-  }, [order]);
+  }, [order, handleLoad]);
 
   return (
     <div>

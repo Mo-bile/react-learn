@@ -2,6 +2,7 @@ import { useState } from "react";
 import "./ReviewForm.css";
 import FIleInput from "./FileInput";
 import RatingInput from "./RatingInput";
+import useAsync from "./hooks/useAsync";
 
 const INITIAL_VALUES = {
   title: "",
@@ -18,8 +19,9 @@ function ReviewForm({
   //네트워크 req 를 보내는 함수를 받아서 기존에 사용하던 createReviews 대신함
   onSubmitSucess,
 }) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submittingError, setSubmittingError] = useState(null);
+  const [isSubmitting, loadingError, onSubmitAsync] = useAsync(onSubmit);
+  // const [isSubmitting, setIsSubmitting] = useState(false);
+  // const [submittingError, setSubmittingError] = useState(null);
   const [values, setValues] = useState(initialValues);
 
   const handleChange = (name, value) => {
@@ -42,19 +44,11 @@ function ReviewForm({
     formatData.append("content", values.content);
     formatData.append("imgFile", values.imgFile);
 
-    let result;
-    try {
-      setSubmittingError(null);
-      setIsSubmitting(true);
-      result = await onSubmit(formatData);
-    } catch (error) {
-      setSubmittingError(error);
-      return;
-    } finally {
-      setIsSubmitting(false);
-    }
+    const result = onSubmitAsync(formatData);
+    if (!result) return;
+
     const { review } = result;
-    setValues(INITIAL_VALUES);
+    setValues(initialValues);
     onSubmitSucess(review);
   };
   return (
@@ -84,7 +78,7 @@ function ReviewForm({
       <button type="submit" disabled={isSubmitting}>
         확인
       </button>
-      {submittingError?.message && <div>{submittingError.message}</div>}
+      {isSubmitting?.message && <div>{isSubmitting.message}</div>}
     </form>
   );
 }
