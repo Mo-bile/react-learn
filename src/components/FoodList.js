@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import FoodForm from "./FoodForm";
 import { updateFood } from "../api";
+import LocaleContext from "../context/LocaleContext";
 
 function formatData(value) {
   const date = new Date(value);
@@ -8,6 +9,7 @@ function formatData(value) {
 }
 
 function FoodListItem({ item, onDelete, onEdit }) {
+  const data = useContext(LocaleContext);
   const handleDeleteClick = () => onDelete(item.id);
   const handleEditClick = () => {
     onEdit(item.id);
@@ -16,6 +18,7 @@ function FoodListItem({ item, onDelete, onEdit }) {
 
   return (
     <div>
+      <p>언어 {data}</p>
       <img src={imgUrl} alt={title} className="FoodListItem-img" />
       <div>제목 : {title}</div>
       <div>칼로리 : {calorie}</div>
