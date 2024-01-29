@@ -3,6 +3,7 @@ import Rating from "./Rating";
 import "./ReviewList.css";
 import ReviewForm from "./ReviewForm";
 import { useLocale } from "../contexts/LocaleContext";
+import useTransrate from "./hooks/useTranslate";
 
 function formatData(value) {
   const date = new Date(value);
@@ -12,6 +13,7 @@ function formatData(value) {
 //자식 컴포넌트
 function ReviewListItem({ item, onDelete, onEdit }) {
   const locate = useLocale();
+  const t = useTransrate();
 
   const handleDeleteClick = () => onDelete(item.id);
 
@@ -29,8 +31,8 @@ function ReviewListItem({ item, onDelete, onEdit }) {
         <p>{formatData(item.createdAt)}</p>
         <p>{item.content}</p>
         <p>현재 언어 : {locate}</p>
-        <button onClick={handleDeleteClick}>삭제</button>
-        <button onClick={handleEditClick}>수정</button>
+        <button onClick={handleDeleteClick}>{t("edit button")}</button>
+        <button onClick={handleEditClick}>{t("delete button")}</button>
       </div>
     </div>
   );
